@@ -517,7 +517,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
       oldLayout: this.state.layout
     });
 
-    this.props.onResizeStart(layout, l, l, null, e, node);
+    this.props.onResizeStart(layout, l, l, null, e, node, w, h);
   }
 
   onResize(i: string, w: number, h: number, { e, node }: GridResizeEvent) {
