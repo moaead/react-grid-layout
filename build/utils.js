@@ -7,6 +7,7 @@ exports.bottom = bottom;
 exports.cloneLayout = cloneLayout;
 exports.cloneLayoutItem = cloneLayoutItem;
 exports.childrenEqual = childrenEqual;
+exports.fastPositionEqual = fastPositionEqual;
 exports.collides = collides;
 exports.compact = compact;
 exports.compactItem = compactItem;
@@ -25,8 +26,9 @@ exports.sortLayoutItemsByRowCol = sortLayoutItemsByRowCol;
 exports.sortLayoutItemsByColRow = sortLayoutItemsByColRow;
 exports.synchronizeLayoutWithChildren = synchronizeLayoutWithChildren;
 exports.validateLayout = validateLayout;
+exports.compactType = compactType;
 exports.autoBindHandlers = autoBindHandlers;
-exports.noop = void 0;
+exports.noop = exports.fastRGLPropsEqual = void 0;
 
 var _lodash = _interopRequireDefault(require("lodash.isequal"));
 
@@ -97,9 +99,10 @@ function cloneLayoutItem(layoutItem
     maxH: layoutItem.maxH,
     moved: Boolean(layoutItem.moved),
     static: Boolean(layoutItem.static),
-    // These can be null
+    // These can be null/undefined
     isDraggable: layoutItem.isDraggable,
-    isResizable: layoutItem.isResizable
+    isResizable: layoutItem.isResizable,
+    isBounded: layoutItem.isBounded
   };
 }
 /**
@@ -120,6 +123,32 @@ function childrenEqual(a
   }), _react.default.Children.map(b, function (c) {
     return c.key;
   }));
+}
+/**
+ * See `fastRGLPropsEqual.js`.
+ * We want this to run as fast as possible - it is called often - and to be
+ * resilient to new props that we add. So rather than call lodash.isEqual,
+ * which isn't suited to comparing props very well, we use this specialized
+ * function in conjunction with preval to generate the fastest possible comparison
+ * function, tuned for exactly our props.
+ */
+
+/*:: type FastRGLPropsEqual = (Object, Object, Function) => boolean;*/
+
+
+var fastRGLPropsEqual
+/*: FastRGLPropsEqual*/
+= require("./fastRGLPropsEqual"); // Like the above, but a lot simpler.
+
+
+exports.fastRGLPropsEqual = fastRGLPropsEqual;
+
+function fastPositionEqual(a
+/*: Position*/
+, b
+/*: Position*/
+) {
+  return a.left === b.left && a.top === b.top && a.width === b.width && a.height === b.height;
 }
 /**
  * Given two layoutitems, check if they collide.
@@ -148,6 +177,8 @@ function collides(l1
 /**
  * Given a layout, compact it. This involves going down each y coordinate and removing gaps
  * between items.
+ *
+ * Does not modify layout items (clones). Creates a new layout array.
  *
  * @param  {Array} layout Layout.
  * @param  {Boolean} verticalCompact Whether or not to compact the layout
@@ -231,6 +262,9 @@ function resolveCompactionCollision(layout
 }
 /**
  * Compact an item in the layout.
+ *
+ * Modifies item.
+ *
  */
 
 
@@ -288,6 +322,8 @@ function compactItem(compareWith
 }
 /**
  * Given a layout, make sure all elements fit within its bounds.
+ *
+ * Modifies layout items.
  *
  * @param  {Array} layout Layout array.
  * @param  {Number} bounds Number of columns.
@@ -396,6 +432,8 @@ function getStatics(layout
 /**
  * Move an element. Responsible for doing cascading movements of other elements.
  *
+ * Modifies layout items.
+ *
  * @param  {Array}      layout            Full layout to modify.
  * @param  {LayoutItem} l                 element to move.
  * @param  {Number}     [x]               X position in grid units.
@@ -439,7 +477,8 @@ function moveElement(layout
   // nearest collision.
 
   var sorted = sortLayoutItems(layout, compactType);
-  var movingUp = compactType === "vertical" && typeof y === "number" ? oldY >= y : compactType === "horizontal" && typeof x === "number" ? oldX >= x : false;
+  var movingUp = compactType === "vertical" && typeof y === "number" ? oldY >= y : compactType === "horizontal" && typeof x === "number" ? oldX >= x : false; // $FlowIgnore acceptable modification of read-only array as it was recently cloned
+
   if (movingUp) sorted = sorted.reverse();
   var collisions = getAllCollisions(sorted, l); // There was a collision; abort
 
@@ -591,13 +630,20 @@ function sortLayoutItems(layout
 {
   if (compactType === "horizontal") return sortLayoutItemsByColRow(layout);else return sortLayoutItemsByRowCol(layout);
 }
+/**
+ * Sort layout items by row ascending and column ascending.
+ *
+ * Does not modify Layout.
+ */
+
 
 function sortLayoutItemsByRowCol(layout
 /*: Layout*/
 )
 /*: Layout*/
 {
-  return [].concat(layout).sort(function (a, b) {
+  // Slice to clone array as sort modifies
+  return layout.slice(0).sort(function (a, b) {
     if (a.y > b.y || a.y === b.y && a.x > b.x) {
       return 1;
     } else if (a.y === b.y && a.x === b.x) {
@@ -608,13 +654,19 @@ function sortLayoutItemsByRowCol(layout
     return -1;
   });
 }
+/**
+ * Sort layout items by column ascending then row ascending.
+ *
+ * Does not modify Layout.
+ */
+
 
 function sortLayoutItemsByColRow(layout
 /*: Layout*/
 )
 /*: Layout*/
 {
-  return [].concat(layout).sort(function (a, b) {
+  return layout.slice(0).sort(function (a, b) {
     if (a.x > b.x || a.x === b.x && a.y > b.y) {
       return 1;
     }
@@ -625,6 +677,8 @@ function sortLayoutItemsByColRow(layout
 /**
  * Generate a layout using the initialLayout and children as a template.
  * Missing entries will be added, extraneous ones will be truncated.
+ *
+ * Does not modify initialLayout.
  *
  * @param  {Array}  initialLayout Layout passed in through props.
  * @param  {String} breakpoint    Current responsive breakpoint.
@@ -647,7 +701,7 @@ function synchronizeLayoutWithChildren(initialLayout
   initialLayout = initialLayout || []; // Generate one layout item per child.
 
   var layout
-  /*: Layout*/
+  /*: LayoutItem[]*/
   = [];
 
   _react.default.Children.forEach(children, function (child
@@ -673,7 +727,7 @@ function synchronizeLayoutWithChildren(initialLayout
           validateLayout([g], "ReactGridLayout.children");
         }
 
-        layout[i] = cloneLayoutItem(_objectSpread({}, g, {
+        layout[i] = cloneLayoutItem(_objectSpread(_objectSpread({}, g), {}, {
           i: child.key
         }));
       } else {
@@ -690,11 +744,10 @@ function synchronizeLayoutWithChildren(initialLayout
   }); // Correct the layout.
 
 
-  layout = correctBounds(layout, {
+  var correctedLayout = correctBounds(layout, {
     cols: cols
   });
-  layout = compact(layout, compactType, cols);
-  return layout;
+  return compact(correctedLayout, compactType, cols);
 }
 /**
  * Validate a layout. Throws errors.
@@ -733,6 +786,19 @@ function validateLayout(layout
       throw new Error("ReactGridLayout: " + contextName + "[" + i + "].static must be a boolean!");
     }
   }
+} // Legacy support for verticalCompact: false
+
+
+function compactType(props
+/*: ?{ verticalCompact: boolean, compactType: CompactType }*/
+)
+/*: CompactType*/
+{
+  var _ref3 = props || {},
+      verticalCompact = _ref3.verticalCompact,
+      compactType = _ref3.compactType;
+
+  return verticalCompact === false ? null : compactType;
 } // Flow can't really figure this out, so we just use Object
 
 

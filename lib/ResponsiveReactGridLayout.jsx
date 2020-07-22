@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import * as React from "react";
 import PropTypes from "prop-types";
 import isEqual from "lodash.isequal";
 
@@ -7,16 +7,17 @@ import {
   cloneLayout,
   synchronizeLayoutWithChildren,
   validateLayout,
-  noop
+  noop,
+  type Layout
 } from "./utils";
 import {
   getBreakpointFromWidth,
   getColsFromBreakpoint,
-  findOrGenerateResponsiveLayout
+  findOrGenerateResponsiveLayout,
+  type ResponsiveLayout,
+  type Breakpoints
 } from "./responsiveUtils";
 import ReactGridLayout from "./ReactGridLayout";
-import type { Props as RGLProps } from "./ReactGridLayout";
-import type { Layout } from "./utils";
 
 const type = obj => Object.prototype.toString.call(obj);
 
@@ -42,14 +43,14 @@ type State = {
   layouts?: { [key: string]: Layout }
 };
 
-type Props<Breakpoint: string = string> = {
-  ...$Exact<RGLProps>,
+type Props<Breakpoint: string = string> = {|
+  ...React.ElementConfig<typeof ReactGridLayout>,
 
   // Responsive config
-  breakpoint: Breakpoint,
-  breakpoints: { [key: Breakpoint]: number },
+  breakpoint?: ?Breakpoint,
+  breakpoints: Breakpoints<Breakpoint>,
   cols: { [key: Breakpoint]: number },
-  layouts: { [key: Breakpoint]: Layout },
+  layouts: ResponsiveLayout<Breakpoint>,
   width: number,
   margin: { [key: Breakpoint]: [number, number] } | [number, number],
   containerPadding: { [key: Breakpoint]: [number, number] } | [number, number],
@@ -67,7 +68,7 @@ type Props<Breakpoint: string = string> = {
     cols: number,
     containerPadding: [number, number] | null
   ) => void
-};
+|};
 
 export default class ResponsiveReactGridLayout extends React.Component<
   Props<>,
@@ -145,7 +146,13 @@ export default class ResponsiveReactGridLayout extends React.Component<
     cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
     layouts: {},
     margin: [10, 10],
-    containerPadding: { lg: null, md: null, sm: null, xs: null, xxs: null },
+    containerPadding: {
+      lg: [0, 0],
+      md: [0, 0],
+      sm: [0, 0],
+      xs: [0, 0],
+      xxs: [0, 0]
+    },
     onBreakpointChange: noop,
     onLayoutChange: noop,
     onWidthChange: noop

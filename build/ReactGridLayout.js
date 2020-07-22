@@ -7,31 +7,37 @@ exports.default = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
 var _lodash = _interopRequireDefault(require("lodash.isequal"));
 
 var _classnames = _interopRequireDefault(require("classnames"));
 
 var _utils = require("./utils");
 
+var _calculateUtils = require("./calculateUtils");
+
 var _GridItem = _interopRequireDefault(require("./GridItem"));
+
+var _ReactGridLayoutPropTypes = _interopRequireDefault(require("./ReactGridLayoutPropTypes"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -39,50 +45,43 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // End Types
-var compactType = function compactType(props
-/*: Props*/
-)
-/*: CompactType*/
-{
-  var _ref = props || {},
-      verticalCompact = _ref.verticalCompact,
-      compactType = _ref.compactType;
-
-  return verticalCompact === false ? null : compactType;
-};
-
 var layoutClassName = "react-grid-layout";
 var isFirefox = false; // Try...catch will protect from navigator not existing (e.g. node) or a bad implementation of navigator
 
 try {
   isFirefox = /firefox/i.test(navigator.userAgent);
-} catch (e) {}
-/* Ignore */
-
+} catch (e) {
+  /* Ignore */
+}
 /**
  * A reactive, fluid grid layout with draggable, resizable components.
  */
 
 
-var ReactGridLayout =
-/*#__PURE__*/
-function (_React$Component) {
+var ReactGridLayout = /*#__PURE__*/function (_React$Component) {
   _inherits(ReactGridLayout, _React$Component);
 
+  var _super = _createSuper(ReactGridLayout);
+
   // TODO publish internal ReactClass displayName transform
+  // Refactored to another module to make way for preval
   function ReactGridLayout(props
   /*: Props*/
   , context
@@ -94,12 +93,12 @@ function (_React$Component) {
 
     _classCallCheck(this, ReactGridLayout);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ReactGridLayout).call(this, props, context));
+    _this = _super.call(this, props, context);
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       activeDrag: null,
       layout: (0, _utils.synchronizeLayoutWithChildren)(_this.props.layout, _this.props.children, _this.props.cols, // Legacy support for verticalCompact: false
-      compactType(_this.props)),
+      (0, _utils.compactType)(_this.props)),
       mounted: false,
       oldDragItem: null,
       oldLayout: null,
@@ -115,39 +114,66 @@ function (_React$Component) {
     ) {
       // we should ignore events from layout's children in Firefox
       // to avoid unpredictable jumping of a dropping placeholder
+      // FIXME remove this hack
       if (isFirefox && e.nativeEvent.target.className.indexOf(layoutClassName) === -1) {
         return false;
       }
 
-      var droppingItem = _this.props.droppingItem;
-      var layout = _this.state.layout;
+      var _this$props = _this.props,
+          droppingItem = _this$props.droppingItem,
+          margin = _this$props.margin,
+          cols = _this$props.cols,
+          rowHeight = _this$props.rowHeight,
+          maxRows = _this$props.maxRows,
+          width = _this$props.width,
+          containerPadding = _this$props.containerPadding;
+      var layout = _this.state.layout; // This is relative to the DOM element that this event fired for.
+
       var _e$nativeEvent = e.nativeEvent,
           layerX = _e$nativeEvent.layerX,
           layerY = _e$nativeEvent.layerY;
       var droppingPosition = {
-        x: layerX,
-        y: layerY,
+        left: layerX,
+        top: layerY,
         e: e
       };
 
       if (!_this.state.droppingDOMNode) {
+        var positionParams
+        /*: PositionParams*/
+        = {
+          cols: cols,
+          margin: margin,
+          maxRows: maxRows,
+          rowHeight: rowHeight,
+          containerWidth: width,
+          containerPadding: containerPadding || margin
+        };
+        var calculatedPosition = (0, _calculateUtils.calcXY)(positionParams, layerY, layerX, droppingItem.w, droppingItem.h);
+
         _this.setState({
-          droppingDOMNode: _react.default.createElement("div", {
+          droppingDOMNode: /*#__PURE__*/_react.default.createElement("div", {
             key: droppingItem.i
           }),
           droppingPosition: droppingPosition,
-          layout: [].concat(_toConsumableArray(layout), [_objectSpread({}, droppingItem, {
-            x: 0,
-            y: 0,
+          layout: [].concat(_toConsumableArray(layout), [_objectSpread(_objectSpread({}, droppingItem), {}, {
+            x: calculatedPosition.x,
+            y: calculatedPosition.y,
             static: false,
             isDraggable: true
           })])
         });
       } else if (_this.state.droppingPosition) {
-        var shouldUpdatePosition = _this.state.droppingPosition.x != layerX || _this.state.droppingPosition.y != layerY;
-        shouldUpdatePosition && _this.setState({
-          droppingPosition: droppingPosition
-        });
+        var _this$state$droppingP = _this.state.droppingPosition,
+            left = _this$state$droppingP.left,
+            top = _this$state$droppingP.top;
+        var shouldUpdatePosition = left != layerX || top != layerY;
+
+        if (shouldUpdatePosition) {
+          _this.setState({
+            droppingPosition: droppingPosition
+          });
+        }
       }
 
       e.stopPropagation();
@@ -155,13 +181,13 @@ function (_React$Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "removeDroppingPlaceholder", function () {
-      var _this$props = _this.props,
-          droppingItem = _this$props.droppingItem,
-          cols = _this$props.cols;
+      var _this$props2 = _this.props,
+          droppingItem = _this$props2.droppingItem,
+          cols = _this$props2.cols;
       var layout = _this.state.layout;
       var newLayout = (0, _utils.compact)(layout.filter(function (l) {
         return l.i !== droppingItem.i;
-      }), compactType(_this.props), cols);
+      }), (0, _utils.compactType)(_this.props), cols);
 
       _this.setState({
         layout: newLayout,
@@ -192,27 +218,15 @@ function (_React$Component) {
     ) {
       var droppingItem = _this.props.droppingItem;
       var layout = _this.state.layout;
-
-      var _ref2 = layout.find(function (l) {
+      var item = layout.find(function (l) {
         return l.i === droppingItem.i;
-      }) || {},
-          x = _ref2.x,
-          y = _ref2.y,
-          w = _ref2.w,
-          h = _ref2.h; // reset gragEnter counter on drop
-
+      }); // reset gragEnter counter on drop
 
       _this.dragEnterCounter = 0;
 
       _this.removeDroppingPlaceholder();
 
-      _this.props.onDrop({
-        x: x,
-        y: y,
-        w: w,
-        h: h,
-        e: e
-      });
+      _this.props.onDrop(layout, item, e);
     });
 
     (0, _utils.autoBindHandlers)(_assertThisInitialized(_this), ["onDragStart", "onDrag", "onDragStop", "onResizeStart", "onResize", "onResizeStop"]);
@@ -228,6 +242,19 @@ function (_React$Component) {
       // to ensure we don't rerender with the wrong width.
 
       this.onLayoutMaybeChanged(this.state.layout, this.props.layout);
+    }
+  }, {
+    key: "shouldComponentUpdate",
+    value: function shouldComponentUpdate(nextProps
+    /*: Props*/
+    , nextState
+    /*: State*/
+    ) {
+      return (// NOTE: this is almost always unequal. Therefore the only way to get better performance
+        // from SCU is if the user intentionally memoizes children. If they do, and they can
+        // handle changes properly, performance will increase.
+        this.props.children !== nextProps.children || !(0, _utils.fastRGLPropsEqual)(this.props, nextProps, _lodash.default) || this.state.activeDrag !== nextState.activeDrag || this.state.mounted !== nextState.mounted || this.state.droppingPosition !== nextState.droppingPosition
+      );
     }
   }, {
     key: "componentDidUpdate",
@@ -272,9 +299,9 @@ function (_React$Component) {
     /*: number*/
     , y
     /*: number*/
-    , _ref3) {
-      var e = _ref3.e,
-          node = _ref3.node;
+    , _ref) {
+      var e = _ref.e,
+          node = _ref.node;
       var layout = this.state.layout;
       var l = (0, _utils.getLayoutItem)(layout, i);
       if (!l) return;
@@ -301,9 +328,9 @@ function (_React$Component) {
     /*: number*/
     , y
     /*: number*/
-    , _ref4) {
-      var e = _ref4.e,
-          node = _ref4.node;
+    , _ref2) {
+      var e = _ref2.e,
+          node = _ref2.node;
       var oldDragItem = this.state.oldDragItem;
       var layout = this.state.layout;
       var cols = this.props.cols;
@@ -320,10 +347,10 @@ function (_React$Component) {
       }; // Move the element to the dragged location.
 
       var isUserAction = true;
-      layout = (0, _utils.moveElement)(layout, l, x, y, isUserAction, this.props.preventCollision, compactType(this.props), cols);
+      layout = (0, _utils.moveElement)(layout, l, x, y, isUserAction, this.props.preventCollision, (0, _utils.compactType)(this.props), cols);
       this.props.onDrag(layout, oldDragItem, l, placeholder, e, node);
       this.setState({
-        layout: (0, _utils.compact)(layout, compactType(this.props), cols),
+        layout: (0, _utils.compact)(layout, (0, _utils.compactType)(this.props), cols),
         activeDrag: placeholder
       });
     }
@@ -344,23 +371,23 @@ function (_React$Component) {
     /*: number*/
     , y
     /*: number*/
-    , _ref5) {
-      var e = _ref5.e,
-          node = _ref5.node;
+    , _ref3) {
+      var e = _ref3.e,
+          node = _ref3.node;
       if (!this.state.activeDrag) return;
       var oldDragItem = this.state.oldDragItem;
       var layout = this.state.layout;
-      var _this$props2 = this.props,
-          cols = _this$props2.cols,
-          preventCollision = _this$props2.preventCollision;
+      var _this$props3 = this.props,
+          cols = _this$props3.cols,
+          preventCollision = _this$props3.preventCollision;
       var l = (0, _utils.getLayoutItem)(layout, i);
       if (!l) return; // Move the element here
 
       var isUserAction = true;
-      layout = (0, _utils.moveElement)(layout, l, x, y, isUserAction, preventCollision, compactType(this.props), cols);
+      layout = (0, _utils.moveElement)(layout, l, x, y, isUserAction, preventCollision, (0, _utils.compactType)(this.props), cols);
       this.props.onDragStop(layout, oldDragItem, l, null, e, node); // Set state
 
-      var newLayout = (0, _utils.compact)(layout, compactType(this.props), cols);
+      var newLayout = (0, _utils.compact)(layout, (0, _utils.compactType)(this.props), cols);
       var oldLayout = this.state.oldLayout;
       this.setState({
         activeDrag: null,
@@ -391,9 +418,9 @@ function (_React$Component) {
     /*: number*/
     , h
     /*: number*/
-    , _ref6) {
-      var e = _ref6.e,
-          node = _ref6.node;
+    , _ref4) {
+      var e = _ref4.e,
+          node = _ref4.node;
       var layout = this.state.layout;
       var l = (0, _utils.getLayoutItem)(layout, i);
       if (!l) return;
@@ -411,15 +438,15 @@ function (_React$Component) {
     /*: number*/
     , h
     /*: number*/
-    , _ref7) {
-      var e = _ref7.e,
-          node = _ref7.node;
+    , _ref5) {
+      var e = _ref5.e,
+          node = _ref5.node;
       var _this$state = this.state,
           layout = _this$state.layout,
           oldResizeItem = _this$state.oldResizeItem;
-      var _this$props3 = this.props,
-          cols = _this$props3.cols,
-          preventCollision = _this$props3.preventCollision;
+      var _this$props4 = this.props,
+          cols = _this$props4.cols,
+          preventCollision = _this$props4.preventCollision;
       var l
       /*: ?LayoutItem*/
       = (0, _utils.getLayoutItem)(layout, i);
@@ -429,7 +456,7 @@ function (_React$Component) {
       var hasCollisions;
 
       if (preventCollision) {
-        var collisions = (0, _utils.getAllCollisions)(layout, _objectSpread({}, l, {
+        var collisions = (0, _utils.getAllCollisions)(layout, _objectSpread(_objectSpread({}, l), {}, {
           w: w,
           h: h
         })).filter(function (layoutItem) {
@@ -468,7 +495,7 @@ function (_React$Component) {
       this.props.onResize(layout, oldResizeItem, l, placeholder, e, node); // Re-compact the layout and set the drag placeholder.
 
       this.setState({
-        layout: (0, _utils.compact)(layout, compactType(this.props), cols),
+        layout: (0, _utils.compact)(layout, (0, _utils.compactType)(this.props), cols),
         activeDrag: placeholder
       });
     }
@@ -480,9 +507,9 @@ function (_React$Component) {
     /*: number*/
     , h
     /*: number*/
-    , _ref8) {
-      var e = _ref8.e,
-          node = _ref8.node;
+    , _ref6) {
+      var e = _ref6.e,
+          node = _ref6.node;
       var _this$state2 = this.state,
           layout = _this$state2.layout,
           oldResizeItem = _this$state2.oldResizeItem;
@@ -490,7 +517,7 @@ function (_React$Component) {
       var l = (0, _utils.getLayoutItem)(layout, i);
       this.props.onResizeStop(layout, oldResizeItem, l, null, e, node); // Set state
 
-      var newLayout = (0, _utils.compact)(layout, compactType(this.props), cols);
+      var newLayout = (0, _utils.compact)(layout, (0, _utils.compactType)(this.props), cols);
       var oldLayout = this.state.oldLayout;
       this.setState({
         activeDrag: null,
@@ -512,17 +539,17 @@ function (_React$Component) {
     {
       var activeDrag = this.state.activeDrag;
       if (!activeDrag) return null;
-      var _this$props4 = this.props,
-          width = _this$props4.width,
-          cols = _this$props4.cols,
-          margin = _this$props4.margin,
-          containerPadding = _this$props4.containerPadding,
-          rowHeight = _this$props4.rowHeight,
-          maxRows = _this$props4.maxRows,
-          useCSSTransforms = _this$props4.useCSSTransforms,
-          transformScale = _this$props4.transformScale; // {...this.state.activeDrag} is pretty slow, actually
+      var _this$props5 = this.props,
+          width = _this$props5.width,
+          cols = _this$props5.cols,
+          margin = _this$props5.margin,
+          containerPadding = _this$props5.containerPadding,
+          rowHeight = _this$props5.rowHeight,
+          maxRows = _this$props5.maxRows,
+          useCSSTransforms = _this$props5.useCSSTransforms,
+          transformScale = _this$props5.transformScale; // {...this.state.activeDrag} is pretty slow, actually
 
-      return _react.default.createElement(_GridItem.default, {
+      return /*#__PURE__*/_react.default.createElement(_GridItem.default, {
         w: activeDrag.w,
         h: activeDrag.h,
         x: activeDrag.x,
@@ -537,9 +564,10 @@ function (_React$Component) {
         rowHeight: rowHeight,
         isDraggable: false,
         isResizable: false,
+        isBounded: false,
         useCSSTransforms: useCSSTransforms,
         transformScale: transformScale
-      }, _react.default.createElement("div", null));
+      }, /*#__PURE__*/_react.default.createElement("div", null));
     }
     /**
      * Given a grid item, set its style attributes & surround in a <Draggable>.
@@ -559,19 +587,20 @@ function (_React$Component) {
       if (!child || !child.key) return;
       var l = (0, _utils.getLayoutItem)(this.state.layout, String(child.key));
       if (!l) return null;
-      var _this$props5 = this.props,
-          width = _this$props5.width,
-          cols = _this$props5.cols,
-          margin = _this$props5.margin,
-          containerPadding = _this$props5.containerPadding,
-          rowHeight = _this$props5.rowHeight,
-          maxRows = _this$props5.maxRows,
-          isDraggable = _this$props5.isDraggable,
-          isResizable = _this$props5.isResizable,
-          useCSSTransforms = _this$props5.useCSSTransforms,
-          transformScale = _this$props5.transformScale,
-          draggableCancel = _this$props5.draggableCancel,
-          draggableHandle = _this$props5.draggableHandle;
+      var _this$props6 = this.props,
+          width = _this$props6.width,
+          cols = _this$props6.cols,
+          margin = _this$props6.margin,
+          containerPadding = _this$props6.containerPadding,
+          rowHeight = _this$props6.rowHeight,
+          maxRows = _this$props6.maxRows,
+          isDraggable = _this$props6.isDraggable,
+          isResizable = _this$props6.isResizable,
+          isBounded = _this$props6.isBounded,
+          useCSSTransforms = _this$props6.useCSSTransforms,
+          transformScale = _this$props6.transformScale,
+          draggableCancel = _this$props6.draggableCancel,
+          draggableHandle = _this$props6.draggableHandle;
       var _this$state3 = this.state,
           mounted = _this$state3.mounted,
           droppingPosition = _this$state3.droppingPosition; // Determine user manipulations possible.
@@ -579,8 +608,10 @@ function (_React$Component) {
       // Any properties defined directly on the grid item will take precedence.
 
       var draggable = typeof l.isDraggable === "boolean" ? l.isDraggable : !l.static && isDraggable;
-      var resizable = typeof l.isResizable === "boolean" ? l.isResizable : !l.static && isResizable;
-      return _react.default.createElement(_GridItem.default, {
+      var resizable = typeof l.isResizable === "boolean" ? l.isResizable : !l.static && isResizable; // isBounded set on child if set on parent, and child is not explicitly false
+
+      var bounded = draggable && isBounded && l.isBounded !== false;
+      return /*#__PURE__*/_react.default.createElement(_GridItem.default, {
         containerWidth: width,
         cols: cols,
         margin: margin,
@@ -597,6 +628,7 @@ function (_React$Component) {
         onResizeStop: this.onResizeStop,
         isDraggable: draggable,
         isResizable: resizable,
+        isBounded: bounded,
         useCSSTransforms: useCSSTransforms && mounted,
         usePercentages: !mounted,
         transformScale: transformScale,
@@ -612,23 +644,27 @@ function (_React$Component) {
         static: l.static,
         droppingPosition: isDroppingItem ? droppingPosition : undefined
       }, child);
-    }
+    } // Called while dragging an element. Part of browser native drag/drop API.
+    // Native event target might be the layout itself, or an element within the layout.
+
   }, {
     key: "render",
     value: function render() {
       var _this2 = this;
 
-      var _this$props6 = this.props,
-          className = _this$props6.className,
-          style = _this$props6.style,
-          isDroppable = _this$props6.isDroppable;
+      var _this$props7 = this.props,
+          className = _this$props7.className,
+          style = _this$props7.style,
+          isDroppable = _this$props7.isDroppable,
+          innerRef = _this$props7.innerRef;
       var mergedClassName = (0, _classnames.default)(layoutClassName, className);
 
       var mergedStyle = _objectSpread({
         height: this.containerHeight()
       }, style);
 
-      return _react.default.createElement("div", {
+      return /*#__PURE__*/_react.default.createElement("div", {
+        ref: innerRef,
         className: mergedClassName,
         style: mergedStyle,
         onDrop: isDroppable ? this.onDrop : _utils.noop,
@@ -665,7 +701,7 @@ function (_React$Component) {
 
 
       if (newLayoutBase) {
-        var newLayout = (0, _utils.synchronizeLayoutWithChildren)(newLayoutBase, nextProps.children, nextProps.cols, compactType(nextProps));
+        var newLayout = (0, _utils.synchronizeLayoutWithChildren)(newLayoutBase, nextProps.children, nextProps.cols, (0, _utils.compactType)(nextProps));
         return {
           layout: newLayout,
           // We need to save these props to state for using
@@ -687,120 +723,7 @@ exports.default = ReactGridLayout;
 
 _defineProperty(ReactGridLayout, "displayName", "ReactGridLayout");
 
-_defineProperty(ReactGridLayout, "propTypes", {
-  //
-  // Basic props
-  //
-  className: _propTypes.default.string,
-  style: _propTypes.default.object,
-  // This can be set explicitly. If it is not set, it will automatically
-  // be set to the container width. Note that resizes will *not* cause this to adjust.
-  // If you need that behavior, use WidthProvider.
-  width: _propTypes.default.number,
-  // If true, the container height swells and contracts to fit contents
-  autoSize: _propTypes.default.bool,
-  // # of cols.
-  cols: _propTypes.default.number,
-  // A selector that will not be draggable.
-  draggableCancel: _propTypes.default.string,
-  // A selector for the draggable handler
-  draggableHandle: _propTypes.default.string,
-  // Deprecated
-  verticalCompact: function verticalCompact(props
-  /*: Props*/
-  ) {
-    if (props.verticalCompact === false && process.env.NODE_ENV !== "production") {
-      console.warn( // eslint-disable-line no-console
-      "`verticalCompact` on <ReactGridLayout> is deprecated and will be removed soon. " + 'Use `compactType`: "horizontal" | "vertical" | null.');
-    }
-  },
-  // Choose vertical or hotizontal compaction
-  compactType: _propTypes.default.oneOf(["vertical", "horizontal"]),
-  // layout is an array of object with the format:
-  // {x: Number, y: Number, w: Number, h: Number, i: String}
-  layout: function layout(props
-  /*: Props*/
-  ) {
-    var layout = props.layout; // I hope you're setting the data-grid property on the grid items
-
-    if (layout === undefined) return;
-    (0, _utils.validateLayout)(layout, "layout");
-  },
-  //
-  // Grid Dimensions
-  //
-  // Margin between items [x, y] in px
-  margin: _propTypes.default.arrayOf(_propTypes.default.number),
-  // Padding inside the container [x, y] in px
-  containerPadding: _propTypes.default.arrayOf(_propTypes.default.number),
-  // Rows have a static height, but you can change this based on breakpoints if you like
-  rowHeight: _propTypes.default.number,
-  // Default Infinity, but you can specify a max here if you like.
-  // Note that this isn't fully fleshed out and won't error if you specify a layout that
-  // extends beyond the row capacity. It will, however, not allow users to drag/resize
-  // an item past the barrier. They can push items beyond the barrier, though.
-  // Intentionally not documented for this reason.
-  maxRows: _propTypes.default.number,
-  //
-  // Flags
-  //
-  isDraggable: _propTypes.default.bool,
-  isResizable: _propTypes.default.bool,
-  // If true, grid items won't change position when being dragged over.
-  preventCollision: _propTypes.default.bool,
-  // Use CSS transforms instead of top/left
-  useCSSTransforms: _propTypes.default.bool,
-  // parent layout transform scale
-  transformScale: _propTypes.default.number,
-  // If true, an external element can trigger onDrop callback with a specific grid position as a parameter
-  isDroppable: _propTypes.default.bool,
-  //
-  // Callbacks
-  //
-  // Callback so you can save the layout. Calls after each drag & resize stops.
-  onLayoutChange: _propTypes.default.func,
-  // Calls when drag starts. Callback is of the signature (layout, oldItem, newItem, placeholder, e, ?node).
-  // All callbacks below have the same signature. 'start' and 'stop' callbacks omit the 'placeholder'.
-  onDragStart: _propTypes.default.func,
-  // Calls on each drag movement.
-  onDrag: _propTypes.default.func,
-  // Calls when drag is complete.
-  onDragStop: _propTypes.default.func,
-  //Calls when resize starts.
-  onResizeStart: _propTypes.default.func,
-  // Calls when resize movement happens.
-  onResize: _propTypes.default.func,
-  // Calls when resize is complete.
-  onResizeStop: _propTypes.default.func,
-  // Calls when some element is dropped.
-  onDrop: _propTypes.default.func,
-  //
-  // Other validations
-  //
-  droppingItem: _propTypes.default.shape({
-    i: _propTypes.default.string.isRequired,
-    w: _propTypes.default.number.isRequired,
-    h: _propTypes.default.number.isRequired
-  }),
-  // Children must not have duplicate keys.
-  children: function children(props
-  /*: Props*/
-  , propName
-  /*: string*/
-  ) {
-    var children = props[propName]; // Check children keys for duplicates. Throw if found.
-
-    var keys = {};
-
-    _react.default.Children.forEach(children, function (child) {
-      if (keys[child.key]) {
-        throw new Error('Duplicate child key "' + child.key + '" found! This will cause problems in ReactGridLayout.');
-      }
-
-      keys[child.key] = true;
-    });
-  }
-});
+_defineProperty(ReactGridLayout, "propTypes", _ReactGridLayoutPropTypes.default);
 
 _defineProperty(ReactGridLayout, "defaultProps", {
   autoSize: true,
@@ -815,6 +738,7 @@ _defineProperty(ReactGridLayout, "defaultProps", {
   // infinite vertical growth
   layout: [],
   margin: [10, 10],
+  isBounded: false,
   isDraggable: true,
   isResizable: true,
   isDroppable: false,

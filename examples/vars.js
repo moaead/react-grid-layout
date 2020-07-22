@@ -128,7 +128,7 @@ module.exports = [
     title: "Toolbox",
     source: "toolbox",
     paragraphs: [
-      "This demonstrates how to implement a toolbox to add and remove widgets."
+      "This demonstrates how to implement a toolbox to add and remove widgets. Click the 'X' on a widget to move it into the toolbox."
     ]
   },
   {
@@ -138,6 +138,13 @@ module.exports = [
       "This demo shows what happens when an item is added from outside of the grid.",
       "Once you drop the item within the grid you'll get its coordinates/properties and can perform actions with " +
         "it accordingly."
+    ]
+  },
+  {
+    title: "Bounded",
+    source: "bounded",
+    paragraphs: [
+      "Try dragging the elements around. They can only be moved within the grid, the draggable placeholder will not show outside it."
     ]
   }
 ];

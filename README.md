@@ -29,6 +29,8 @@ RGL is React-only and does not require jQuery.
 - [Grid Layout Props](#grid-layout-props)
 - [Responsive Grid Layout Props](#responsive-grid-layout-props)
 - [Grid Item Props](#grid-item-props)
+- [User Recipes](../../wiki/Users-recipes)
+- [Performance](#performance)
 - [Contribute](#contribute)
 - [TODO List](#todo-list)
 
@@ -50,6 +52,7 @@ RGL is React-only and does not require jQuery.
 1. [Error Case](https://strml.github.io/react-grid-layout/examples/13-error-case.html)
 1. [Toolbox](https://strml.github.io/react-grid-layout/examples/14-toolbox.html)
 1. [Drag From Outside](https://strml.github.io/react-grid-layout/examples/15-drag-from-outside.html)
+1. [Bounded Layout](https://strml.github.io/react-grid-layout/examples/16-bounded.html)
 
 #### Projects Using React-Grid-Layout
 
@@ -84,7 +87,7 @@ RGL is React-only and does not require jQuery.
 * Responsive breakpoints
 * Separate layouts per responsive breakpoint
 * Grid Items placed using CSS Transforms
-* Performance: [on](http://i.imgur.com/FTogpLp.jpg) / [off](http://i.imgur.com/gOveMm8.jpg), note paint (green) as % of time
+  * Performance with CSS Transforms: [on](http://i.imgur.com/FTogpLp.jpg) / [off](http://i.imgur.com/gOveMm8.jpg), note paint (green) as % of time
 
 |Version         | Compatibility    |
 |----------------|------------------|
@@ -195,8 +198,8 @@ If the largest is provided, RGL will attempt to interpolate the rest.
 You will also need to provide a `width`, when using `<ResponsiveReactGridLayout>` it is suggested you use the HOC
 `WidthProvider` as per the instructions below.
 
-For the time being, it is not possible to supply responsive mappings via the `data-grid` property on individual
-items, but that is coming soon.
+It is possible to supply default mappings via the `data-grid` property on individual
+items, so that they would be taken into account within layout interpolation. 
 
 ### Providing Grid Width
 
@@ -302,6 +305,7 @@ droppingItem?: { i: string, w: number, h: number }
 //
 isDraggable: ?boolean = true,
 isResizable: ?boolean = true,
+isBounded: ?boolean = false,
 // Uses CSS3 translate() instead of position top/left.
 // This makes about 6x faster paint performance
 useCSSTransforms: ?boolean = true,
@@ -352,8 +356,12 @@ onResizeStart: ItemCallback,
 onResize: ItemCallback,
 // Calls when resize is complete.
 onResizeStop: ItemCallback,
-// Calls when some element has been dropped
-onDrop: (elemParams: { x: number, y: number, e: Event }) => void
+// Calls when an element has been dropped into the grid from outside.
+onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void
+
+// Ref for getting a reference for the grid's wrapping div.
+// You can use this instead of a regular ref and the deprecated `ReactDOM.findDOMNode()`` function.
+innerRef: ?React.Ref<"div">
 ```
 
 ### Responsive Grid Layout Props
@@ -438,9 +446,47 @@ will be draggable, even if the item is marked `static: true`.
   // If false, will not be draggable. Overrides `static`.
   isDraggable: ?boolean = true,
   // If false, will not be resizable. Overrides `static`.
-  isResizable: ?boolean = true
+  isResizable: ?boolean = true,
+  // If true and draggable, item will be moved only within grid.
+  isBounded: ?boolean = false
 }
 ```
+
+### Performance
+
+`<ReactGridLayout>` has [an optimized `shouldComponentUpdate` implementation](lib/ReactGridLayout.jsx), but it relies on the user memoizing the `children` array:
+
+
+```js
+// lib/ReactGridLayout.jsx
+// ...
+shouldComponentUpdate(nextProps: Props, nextState: State) {
+  return (
+    // NOTE: this is almost always unequal. Therefore the only way to get better performance
+    // from SCU is if the user intentionally memoizes children. If they do, and they can
+    // handle changes properly, performance will increase.
+    this.props.children !== nextProps.children ||
+    !fastRGLPropsEqual(this.props, nextProps, isEqual) ||
+    !isEqual(this.state.activeDrag, nextState.activeDrag)
+  );
+}
+// ...
+```
+
+If you memoize your children, you can take advantage of this, and reap faster rerenders. For example:
+
+```js
+function MyGrid(props) {
+  const children = React.useMemo(() => {
+    return new Array(props.count).fill(undefined).map((val, idx) => {
+      return <div key={idx} data-grid={{x: idx, y: 1, w: 1, h: 1}} />;
+    });
+  }, [props.count]);
+  return <ReactGridLayout cols={12}>{children}</ReactGridLayout>;
+}
+```
+
+Because the `children` prop doesn't change between rerenders, updates to `<MyGrid>` won't result in new renders, improving performance.
 
 ## Contribute
 
