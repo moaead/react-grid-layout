@@ -102,6 +102,7 @@ function cloneLayoutItem(layoutItem
     // These can be null/undefined
     isDraggable: layoutItem.isDraggable,
     isResizable: layoutItem.isResizable,
+    resizeHandles: layoutItem.resizeHandles,
     isBounded: layoutItem.isBounded
   };
 }

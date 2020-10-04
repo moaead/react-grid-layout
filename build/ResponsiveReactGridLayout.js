@@ -69,11 +69,17 @@ var type = function type(obj) {
  */
 
 
-function getIndentationValue(param
-/*: { [key: string]: [number, number] } | [number, number]*/
+function getIndentationValue
+/*:: <T: ?[number, number]>*/
+(param
+/*: { [key: string]: T } | T*/
 , breakpoint
 /*: string*/
-) {
+)
+/*: T*/
+{
+  // $FlowIssue doesn't seem to understand this
+  if (param == null) return null;
   return Array.isArray(param) ? param : param[breakpoint];
 }
 /*:: type State = {
@@ -93,7 +99,8 @@ function getIndentationValue(param
   layouts: ResponsiveLayout<Breakpoint>,
   width: number,
   margin: { [key: Breakpoint]: [number, number] } | [number, number],
-  containerPadding: { [key: Breakpoint]: [number, number] } | [number, number],
+  /* prettier-ignore *-/
+  containerPadding: { [key: Breakpoint]: ?[number, number] } | ?[number, number],
 
   // Callbacks
   onBreakpointChange: (Breakpoint, cols: number) => void,
@@ -106,7 +113,7 @@ function getIndentationValue(param
     containerWidth: number,
     margin: [number, number],
     cols: number,
-    containerPadding: [number, number] | null
+    containerPadding: ?[number, number]
   ) => void
 |};*/
 
@@ -348,11 +355,11 @@ _defineProperty(ResponsiveReactGridLayout, "defaultProps", {
   layouts: {},
   margin: [10, 10],
   containerPadding: {
-    lg: [0, 0],
-    md: [0, 0],
-    sm: [0, 0],
-    xs: [0, 0],
-    xxs: [0, 0]
+    lg: null,
+    md: null,
+    sm: null,
+    xs: null,
+    xxs: null
   },
   onBreakpointChange: _utils.noop,
   onLayoutChange: _utils.noop,
