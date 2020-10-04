@@ -600,7 +600,8 @@ var ReactGridLayout = /*#__PURE__*/function (_React$Component) {
           useCSSTransforms = _this$props6.useCSSTransforms,
           transformScale = _this$props6.transformScale,
           draggableCancel = _this$props6.draggableCancel,
-          draggableHandle = _this$props6.draggableHandle;
+          draggableHandle = _this$props6.draggableHandle,
+          resizeHandles = _this$props6.resizeHandles;
       var _this$state3 = this.state,
           mounted = _this$state3.mounted,
           droppingPosition = _this$state3.droppingPosition; // Determine user manipulations possible.
@@ -608,7 +609,8 @@ var ReactGridLayout = /*#__PURE__*/function (_React$Component) {
       // Any properties defined directly on the grid item will take precedence.
 
       var draggable = typeof l.isDraggable === "boolean" ? l.isDraggable : !l.static && isDraggable;
-      var resizable = typeof l.isResizable === "boolean" ? l.isResizable : !l.static && isResizable; // isBounded set on child if set on parent, and child is not explicitly false
+      var resizable = typeof l.isResizable === "boolean" ? l.isResizable : !l.static && isResizable;
+      var resizeHandlesOptions = l.resizeHandles || resizeHandles; // isBounded set on child if set on parent, and child is not explicitly false
 
       var bounded = draggable && isBounded && l.isBounded !== false;
       return /*#__PURE__*/_react.default.createElement(_GridItem.default, {
@@ -642,7 +644,8 @@ var ReactGridLayout = /*#__PURE__*/function (_React$Component) {
         maxH: l.maxH,
         maxW: l.maxW,
         static: l.static,
-        droppingPosition: isDroppingItem ? droppingPosition : undefined
+        droppingPosition: isDroppingItem ? droppingPosition : undefined,
+        resizeHandles: resizeHandlesOptions
       }, child);
     } // Called while dragging an element. Part of browser native drag/drop API.
     // Native event target might be the layout itself, or an element within the layout.
@@ -752,6 +755,7 @@ _defineProperty(ReactGridLayout, "defaultProps", {
     h: 1,
     w: 1
   },
+  resizeHandles: ["se"],
   onLayoutChange: _utils.noop,
   onDragStart: _utils.noop,
   onDrag: _utils.noop,

@@ -427,7 +427,8 @@ var GridItem = /*#__PURE__*/function (_React$Component) {
           minH = _this$props6.minH,
           maxW = _this$props6.maxW,
           maxH = _this$props6.maxH,
-          transformScale = _this$props6.transformScale;
+          transformScale = _this$props6.transformScale,
+          resizeHandles = _this$props6.resizeHandles;
       var positionParams = this.getPositionParams(); // This is the max possible width - doesn't go to infinity because of the width of the window
 
       var maxWidth = (0, _calculateUtils.calcGridItemPosition)(positionParams, 0, 0, cols - x, 0).width; // Calculate min/max constraints using our min & maxes
@@ -448,7 +449,8 @@ var GridItem = /*#__PURE__*/function (_React$Component) {
         onResizeStop: this.onResizeStop,
         onResizeStart: this.onResizeStart,
         onResize: this.onResize,
-        transformScale: transformScale
+        transformScale: transformScale,
+        resizeHandles: resizeHandles
       }, child);
     }
     /**
